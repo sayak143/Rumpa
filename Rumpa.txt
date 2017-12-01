@@ -1,1 +1,44 @@
-I love you thapkol
+CREATE DEFINER=`root`@`localhost` PROCEDURE `P_GET_PROFILE`(
+	IN IN_USER_ID INT)
+BEGIN
+	SELECT 
+	GROUP_CONCAT(distinct `t_macroworld_blacklist`.`ID` SEPARATOR '|') AS BLOCKED_ID,
+	GROUP_CONCAT(distinct `t_macroworld_career`.`ID` SEPARATOR '|') AS CAREER_ID,
+    GROUP_CONCAT(distinct `t_macroworld_career`.`CAREER_TYPE` SEPARATOR '|') AS CAREER_TYPE,
+    GROUP_CONCAT(distinct `t_macroworld_career`.`ORGANIZATION_NAME` SEPARATOR '|') AS ORGANIZATION_NAME,
+    GROUP_CONCAT(distinct `t_macroworld_career`.`FROM` SEPARATOR '|') AS FROM_DATE,
+    GROUP_CONCAT(distinct `t_macroworld_career`.`TO` SEPARATOR '|') AS TO_DATE,
+    GROUP_CONCAT(distinct `t_macroworld_career`.`CURRENTLY_DOING` SEPARATOR '|') AS CURRENTLY_DOING,
+    GROUP_CONCAT(distinct `t_macroworld_friend`.`FRIEND_ID` SEPARATOR '|') AS FRIEND_ID,
+    `t_macroworld_login_management`.`LOGIN_TIMESTAMP` AS LOGIN_TIMESTAMP,
+    `t_macroworld_login_management`.`LOGOUT_TIMESTAMP` AS LOGOUT_TIMESTAMP,
+    `t_macroworld_registration`.`FIRST_NAME` AS FIRST_NAME,
+    `t_macroworld_registration`.`LAST_NAME` AS LAST_NAME,
+    `t_macroworld_registration`.`EMAIL_ID` AS EMAIL_ID,
+    `t_macroworld_registration`.`MOBILE_NUMBER` AS MOBILE_NUMBER,
+    `t_macroworld_registration`.`EXTENTION` AS EXTENTION,
+    `t_macroworld_registration`.`DATE_OF_BIRTH` AS DATE_OF_BIRTH,
+    `t_macroworld_registration`.`GENDER` AS GENDER,
+    `t_macroworld_registration`.`USER_TYPE` AS USER_TYPE,
+    `t_macroworld_registration`.`DP_URL` AS DP_URL,
+    `t_macroworld_registration`.`ADHAR_NUMBER` AS ADHAR_NUMBER,
+    `t_macroworld_registration`.`ADHAR_VERIFIED` AS ADHAR_VERIFIED,
+    `t_macroworld_registration`.`MOBILE_VERIFIED` AS MOBILE_VERIFIED,
+    `t_macroworld_registration`.`EMAIL_VERIFIED` AS EMAIL_VERIFIED,
+	GROUP_CONCAT(distinct `t_macroworld_user_address`.`ID` SEPARATOR '|') AS ADDRESS_ID,
+    GROUP_CONCAT(distinct `t_macroworld_user_address`.`LIVING_STATUS` SEPARATOR '|') AS LIVING_STATUS,
+    GROUP_CONCAT(distinct `t_macroworld_user_address`.`LATITUDE` SEPARATOR '|') AS LATITUDE,
+    GROUP_CONCAT(distinct `t_macroworld_user_address`.`LONGITUDE` SEPARATOR '|') AS LONGITUDE,
+	GROUP_CONCAT(distinct `t_macroworld_user_interests`.`ID` SEPARATOR '|') AS INTEREST_ID,
+    GROUP_CONCAT(distinct `t_macroworld_user_interests`.`INTEREST_CATEGORY` SEPARATOR '|') AS INTEREST_CATEGORY,
+    GROUP_CONCAT(distinct `t_macroworld_user_interests`.`INTEREST_SUB_CATEGORY` SEPARATOR '|') AS INTEREST_SUB_CATEGORY,
+    GROUP_CONCAT(distinct `t_macroworld_user_interests`.`OTHER` SEPARATOR '|') AS OTHER
+FROM `macroworld`.`t_macroworld_registration`
+LEFT JOIN `t_macroworld_blacklist` ON`t_macroworld_blacklist`.`BLOCKED_USER`=`t_macroworld_registration`.`ID` 
+LEFT JOIN `t_macroworld_career` ON `t_macroworld_career`.`USER_ID`=`t_macroworld_registration`.`ID` 
+LEFT JOIN `t_macroworld_friend` ON `t_macroworld_friend`.`ID`= `t_macroworld_registration`.`ID` 
+LEFT JOIN `t_macroworld_login_management` ON `t_macroworld_login_management`.`ID`=`t_macroworld_registration`.`ID`
+LEFT JOIN `t_macroworld_user_address` ON `t_macroworld_user_address`.`USER_ID`=`t_macroworld_registration`.`ID`
+LEFT JOIN `t_macroworld_user_interests` ON `t_macroworld_user_interests`.`USER_ID`=`t_macroworld_registration`.`ID`
+where `t_macroworld_registration`.`ID`= IN_USER_ID;
+END
